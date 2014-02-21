@@ -1,0 +1,18 @@
+module.exports = {
+	key: '',
+	secret: '',
+	smtp: {
+		host: "mail.example.com",
+		secureConnection: false,
+		port: 587,
+		auth: {
+			user: "user@example.com",
+			pass: "example"
+		}
+	},
+	mailOptions: {
+    	from: "user@example.com", // sender address
+	    to: "user@example.com",
+   	 	subject: "Kraken Balance changed" // Subject line
+	}
+};
