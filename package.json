@@ -1,0 +1,35 @@
+{
+  "name": "krakentracker",
+  "version": "0.1.0",
+  "description": "Sends an encrypted email when your kraken.com balance changes",
+  "keywords": [
+    "kraken",
+    "api",
+    "btc",
+    "bitcoin"
+  ],
+  "author": {
+    "name": "Timon Rapp",
+    "url": "https://github.com/trapp"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "dependencies": {
+    "kraken-api": ">=0.1.3",
+    "nodemailer": ">=0.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/trapp/krakentracker"
+  },
+  "main": "track.js",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "bugs": {
+    "url": "https://github.com/trapp/krakentracker/issues",
+    "email": "timon@zaeda.net"
+  },
+  "readmeFilename": "README.md",
+  "readme": "Todo"
+}
