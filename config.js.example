@@ -1,6 +1,8 @@
 module.exports = {
 	key: '',
 	secret: '',
+	gpgCommand: '/usr/bin/gpg',
+	pubKeyId: '',
 	smtp: {
 		host: "mail.example.com",
 		secureConnection: false,

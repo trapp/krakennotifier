@@ -34,7 +34,7 @@ function check() {
 function sendmail(message) {
     var mailOptions = config.mailOptions;
 	
-    var gpg = spawn('/usr/local/bin/gpg', ['-e', '-r', 'C79670E6', '-a']);
+    var gpg = spawn(config.gpgCommand, ['-e', '-r', config.pubKeyId, '-a']);
     
     gpg.stdin.write(message);
     gpg.stdin.end();
