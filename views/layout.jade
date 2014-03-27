@@ -1,0 +1,55 @@
+mixin form-field(type, label, name, id, placeholder, required)
+    - if ((typeof(errors) !== "undefined") && (errors[name])) {
+        div(class='form-group has-error has-feedback')
+            label(for=id, class="control-label")= label
+            if required
+                input(class="form-control", type=type, name=name, id=id, placeholder=placeholder, value=values[name] || "", required)
+            else
+                input(class="form-control", type=type, name=name, id=id, placeholder=placeholder, value=values[name] || "")
+            span(class="fa fa-exclamation-circle form-control-feedback")
+            span.help-block=errors[name].msg
+    - } else if (typeof(errors) !== "undefined") {
+        div(class='form-group has-success has-feedback')
+            label(for=id, class="control-label")= label
+            if required
+                input(class="form-control", type=type, name=name, id=id, placeholder=placeholder, value=values[name] || "",  required)
+            else
+                input(class="form-control", type=type, name=name, id=id, placeholder=placeholder, value=values[name] || "")
+
+            span(class="fa fa-check-circle form-control-feedback")
+    - } else {
+        div(class='form-group')
+            label(for=id, class="control-label")= label
+            if required
+                input(class="form-control", type=type, name=name, id=id, placeholder=placeholder, required)
+            else
+                input(class="form-control", type=type, name=name, id=id, placeholder=placeholder)
+    - }
+
+
+doctype html
+html
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible',content='IE=edge')
+        meta(name='viewport',content='width=device-width initial-scale=1')
+        title= 'Kraken Notifier | ' + title
+        link(rel='stylesheet', href='/style.css')
+    body
+        header(class="navbar navbar-static-top", role="banner", id='top')
+            div(class='wrapper')
+                div(class='navbar-header')
+                    button(class="navbar-toggle", type="button", data-toggle="collapse", data-target=".bs-navbar-collapse")
+                        span(class="sr-only") Toggle navigation
+                        span(class="icon-bar")
+                        span(class="icon-bar")
+                        span(class="icon-bar")
+                    a(href="/", class="navbar-brand") Kraken Notifier
+                nav(class="collapse navbar-collapse bs-navbar-collapse", role="navigation")
+                    ul(class="nav navbar-nav")
+                        li
+                            a(href="/subscribe") Subscribe
+                        li
+                            a(href="/unsubscribe") Unsubscribe
+        block content
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')

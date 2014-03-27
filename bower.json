@@ -1,0 +1,23 @@
+{
+  "name": "trapp.io",
+  "version": "1.0.0",
+  "authors": [
+    "Timon Rapp <timon@zaeda.net>"
+  ],
+  "description": "Trapps online portfolio",
+  "main": "app.js",
+  "license": "MIT",
+  "homepage": "https://github.com/trapp/krakennotifier",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "font-awesome": "~4.0.3",
+    "bootstrap": "~3.1.1"
+  }
+}

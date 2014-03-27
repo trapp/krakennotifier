@@ -1,0 +1,11 @@
+extends layout
+
+block content
+    div(class='wrapper')
+        h1= title
+
+        form(method='post', action='', role="form")
+            +form-field('email', 'Mail:', 'mail', 'mail', 'Enter your mail address', false)
+            +form-field('key', 'API key:', 'key', 'key', 'Paste your API key here', false)
+            +form-field('secret', 'API secret:', 'secret', 'secret', 'Paste your API secret here', false)
+            button(type='submit').submit-button.btn-primary Subscribe
