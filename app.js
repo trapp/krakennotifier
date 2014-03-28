@@ -18,6 +18,7 @@ subscription.inject(tracker);
 
 // all environments
 app.set('port', process.env.PORT || config.port);
+app.set('host', process.env.HOST || config.host);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -48,7 +49,7 @@ app.post('/subscribe', subscription.subscribe);
 app.get('/unsubscribe', subscription.unsubscribe);
 app.post('/unsubscribe', subscription.unsubscribe);
 
-http.createServer(app).listen(app.get('port'), function(){
+http.createServer(app).listen(app.get('port'), app.get('host'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 

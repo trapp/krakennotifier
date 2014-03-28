@@ -4,14 +4,21 @@ Sends an email when your kraken.com balance changes.
 
 Check it out at: [krakennotifier.trapp.io](http://krakennotifier.trapp.io)
 
+## Requirements
+
+* NodeJS
+* NPM
+* Bower (If missing install with `npm install -g bower`)
+
 ## Installation
 
 Installation is easy as pie. Checkout the sources:
 
-    git clone https://github.com/trapp/kraken-tracker
+    git clone https://github.com/trapp/krakennotifier
 
 Download necessary dependencies:
 
+    cd krakennotifier
     npm install
     bower install
 

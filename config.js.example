@@ -1,11 +1,12 @@
 module.exports = {
     // Polling interval in milli seconds.
-	interval: 60000,
+    interval: 60000,
 
-    // Port for the web interface.
+    // Port and Host for the web interface.
     port: 3000,
+    host: '127.0.0.1',
 
-	// Location of the storage file. Contains all API-Keys.
+    // Location of the storage file. Contains all API-Keys.
     storageFile: 'storage.js',
 
     // Mailing configuration.
