@@ -125,7 +125,7 @@ function check() {
         // TODO: check if save is really necessary.
         save(function(error) {
             // TODO error handling
-            setTimeout(check, 60000);
+            setTimeout(check, config.interval);
         });
     });
 }

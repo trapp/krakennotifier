@@ -1,20 +1,25 @@
 module.exports = {
-	key: '',
-	secret: '',
-	gpgCommand: '/usr/bin/gpg',
-	pubKeyId: '',
-	smtp: {
-		host: "mail.example.com",
-		secureConnection: false,
-		port: 587,
-		auth: {
-			user: "user@example.com",
-			pass: "example"
-		}
-	},
-	mailOptions: {
-    	from: "user@example.com", // sender address
-	    to: "user@example.com",
-   	 	subject: "Kraken Balance changed" // Subject line
-	}
+    // Polling interval in milli seconds.
+	interval: 60000,
+
+    // Port for the web interface.
+    port: 3000,
+
+	// Location of the storage file. Contains all API-Keys.
+    storageFile: 'storage.js',
+
+    // Mailing configuration.
+    smtp: {
+        host: "mail.example.com",
+        secureConnection: false,
+        port: 25,
+        auth: {
+            user: "user@example.com",
+            pass: "example"
+        }
+    },
+    mailOptions: {
+        from: "Mister Example <example@example.com>", // sender address
+        subject: "Kraken balance update"      // Subject line
+    }
 };

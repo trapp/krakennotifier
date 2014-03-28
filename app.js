@@ -11,12 +11,13 @@ var http = require('http');
 var path = require('path');
 var lessMiddleware = require('less-middleware');
 var tracker = require('./tracker.js');
+var config = require('./config.js');
 var app = express();
 
 subscription.inject(tracker);
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || config.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
