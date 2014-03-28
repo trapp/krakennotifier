@@ -13,6 +13,7 @@ var lessMiddleware = require('less-middleware');
 var tracker = require('./tracker.js');
 var config = require('./config.js');
 var app = express();
+var isDev = app.get('env') == 'development';
 
 subscription.inject(tracker);
 
@@ -31,15 +32,17 @@ app.use(app.router);
 app.use(lessMiddleware({
     src: path.join(__dirname, 'less'),
     dest: path.join(__dirname, 'public'),
-    //once: true,
-    force: true,
+    // Read views only once in prod mode.
+    once: !isDev,
+    // Rerender views on every view in dev mode.
+    force: isDev,
     compress: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/components', express.static(__dirname + '/bower_components'));
 
 // development only
-if ('development' == app.get('env')) {
+if (isDev) {
   app.use(express.errorHandler());
 }
 
