@@ -33,13 +33,19 @@ exports.confirm = function(token, callback) {
     }
     var data = confirmMap[token];
     delete(confirmMap[token]);
-    if (data.type == TOKEN_ADD) {
-        addClient(data.mail, data.key, data.secret, callback);
-    } else if (data.type == TOKEN_REMOVE) {
-        removeClient(data.mail, data.key, callback);
-    } else {
-        callback(new Error("Invalid token data. Please contact support."));
-    }
+    save(function(error) {
+        if (error) {
+            console.log("Error while removing token: " + error.message);
+        }
+
+        if (data.type == TOKEN_ADD) {
+            addClient(data.mail, data.key, data.secret, callback);
+        } else if (data.type == TOKEN_REMOVE) {
+            removeClient(data.mail, data.key, callback);
+        } else {
+            callback(new Error("Invalid token data. Please contact support."));
+        }
+    });
 };
 
 /**
@@ -166,6 +172,7 @@ function addClient (mail, key, secret, callback) {
     var id = hash(mail + key);
     if (registryMap.hasOwnProperty(id)) {
         callback(new Error('This API key exists already.'), TOKEN_ADD);
+        return;
     } else {
         registryMap[id] = registry.length;
         registry.push({
