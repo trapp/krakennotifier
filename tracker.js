@@ -130,8 +130,12 @@ exports.start = function() {
     fs.exists(storage, function(exists) {
         if (exists === true) {
             var data = require(storage);
-            registry = data.registry;
-            confirmMap = data.token;
+            if (data && data.registry) {
+                registry = data.registry;
+            }
+            if (data && data.token) {
+                confirmMap = data.token;
+            }
             for (var i = 0; i < registry.length; i++) {
                 var id = hash(registry[i].mail + registry[i].key);
                 registryMap[id] = i;
