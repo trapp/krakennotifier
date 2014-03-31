@@ -44,7 +44,7 @@ exports.unsubscribe = function(req, res) {
         var values = req.body || {};
         var errors = req.validationErrors(true) || {};
         if (Object.keys(errors).length > 0) {
-            res.render('subscribe', { title: title, errors: errors, values: values});
+            res.render('unsubscribe', { title: title, errors: errors, values: values});
         } else {
 
             tracker.removeRequest(values.mail, values.key, function(error) {
