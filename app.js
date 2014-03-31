@@ -52,8 +52,32 @@ app.post('/subscribe', subscription.subscribe);
 app.get('/unsubscribe', subscription.unsubscribe);
 app.post('/unsubscribe', subscription.unsubscribe);
 
+if (config.ssl !== null) {
+
+    app.use (function (req, res, next) {
+        if (req.secure) {
+            next();
+        } else {
+            res.redirect('https://' + req.headers.host + req.url);
+        }
+    });
+
+    if (config.ssl.hasOwnProperty('key')) {
+        config.ssl.key = fs.readFileSync(config.ssl.key);
+    }
+    if (config.ssl.hasOwnProperty('cert')) {
+        config.ssl.cert = fs.readFileSync(config.ssl.cert);
+    }
+    if (config.ssl.hasOwnProperty('ca')) {
+        config.ssl.ca = fs.readFileSync(config.ssl.ca);
+    }
+    https.createServer(config.ssl, app).listen(config.ssl.port, config.ssl.host, function() {
+        console.log('Secure express server listening on ' + config.ssl.host + ":" + config.ssl.port);
+    });
+}
+
 http.createServer(app).listen(app.get('port'), app.get('host'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+    console.log('Express server listening on port ' + app.get('port'));
 });
 
 tracker.start();
