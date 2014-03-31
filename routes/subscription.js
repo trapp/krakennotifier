@@ -49,8 +49,7 @@ exports.unsubscribe = function(req, res) {
 
             tracker.removeRequest(values.mail, values.key, function(error) {
                 if (error) {
-                    // TODO improve error handling. "key" has maybe nothing to do with it.
-                    errors['key'] = {
+                    errors[error.field || 'key'] = {
                         'msg': error.message
                     };
                     res.render('unsubscribe', { title: title, errors: errors, values: values});
@@ -61,6 +60,27 @@ exports.unsubscribe = function(req, res) {
         }
     } else {
         res.render('unsubscribe', { title: title});
+    }
+};
+
+exports.confirm = function(req, res) {
+
+    var title = 'Confirm an action.';
+
+    req.checkQuery('token', 'Confirmation Token is missing.').notEmpty();
+    var errors = req.validationErrors(true) || {};
+    if (Object.keys(errors).length > 0) {
+        res.render('confirm', { title: title, errors: errors});
+    } else {
+        tracker.confirm(req.query.token, function(error, message) {
+            if (error) {
+                errors['token'] = {
+                    'msg': error.message
+                };
+                res.render('confirm', { title: title, errors: errors});
+            }
+            res.render('confirm', { title: title, message: message});
+        });
     }
 };
 

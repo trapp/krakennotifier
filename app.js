@@ -53,8 +53,9 @@ app.get('/subscribe', subscription.subscribe);
 app.post('/subscribe', subscription.subscribe);
 app.get('/unsubscribe', subscription.unsubscribe);
 app.post('/unsubscribe', subscription.unsubscribe);
+app.get('/confirm', subscription.confirm);
 
-if (config.ssl !== null) {
+if (config.ssl) {
 
     app.use (function (req, res, next) {
         if (req.secure) {

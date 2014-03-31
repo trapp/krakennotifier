@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    div(class='wrapper')
+        h1= title
+
+        - if (typeof(errors) !== "undefined") {
+            div.bg-danger= errors['token'].msg
+        - } else {
+            div.bg-success= message
+        - }
+        a(href="/subscribe")
+            button.btn-success Create another one

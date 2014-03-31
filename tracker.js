@@ -5,6 +5,7 @@ var async = require('async');
 var fs = require('fs');
 var crypto = require('crypto');
 var config = require('./config.js');
+var errors = require('./errors.js');
 var smtpTransport = nodemailer.createTransport("SMTP", config.smtp);
 var registry = [];
 var registryMap = {};
@@ -51,6 +52,12 @@ exports.confirm = function(token, callback) {
  * @param callback
  */
 exports.addRequest = function(mail, key, secret, callback) {
+    var id = hash(mail + key);
+    if (registryMap.hasOwnProperty(id)) {
+        callback(new Error('This API key exists already.'));
+        return;
+    }
+
     var token = hash(mail + key + secret + Date.now());
     confirmMap[token] = {
         type: TOKEN_ADD,
@@ -60,8 +67,8 @@ exports.addRequest = function(mail, key, secret, callback) {
         date: Date.now()
     };
     save(function() {
-        sendmail(mail, 'Please confirm your Kraken Notifier subscription by visiting this location: ' + config.url + "/confirm/" + token + "\n"
-         + "If you did not enter your mail address at Kraken Notifier please ignore this email.", callback);
+        sendmail(mail, 'Please confirm your Kraken Notifier subscription by visiting this location: ' + config.url + "/confirm?token=" + token + "\n\n"
+         + "If you did not enter your mail address at Kraken Notifier please ignore this email.", 'Welcome to Kraken Notifier', callback);
     });
 };
 
@@ -77,6 +84,27 @@ exports.addRequest = function(mail, key, secret, callback) {
  * @param callback
  */
 exports.removeRequest = function(mail, key, callback) {
+    var found = false;
+    if (!key) {
+        // Look if we have this mail address in the storage.
+        for (var i = 0; i < registry.length; i++) {
+            if(registry[i].mail === mail) {
+                found = true;
+            }
+        }
+    } else if (registryMap.hasOwnProperty(hash(mail + key))) {
+        found = true;
+    }
+
+    if (found === false) {
+        if (!key) {
+            callback(new errors.FieldError('mail', "This mail address doesn't exist in storage."));
+        } else {
+            callback(new errors.FieldError('key', "This key and email combination doesn't exist in storage."));
+        }
+        return;
+    }
+
     var token = hash(mail + key + Date.now());
     confirmMap[token] = {
         type: TOKEN_REMOVE,
@@ -85,15 +113,15 @@ exports.removeRequest = function(mail, key, callback) {
         date: Date.now()
     };
 
-    var message = 'Please confirm the deletion of all Kraken Notifier subscriptions by visiting this location: ' + config.url + "/confirm/" + token + "\n"
+    var message = 'Please confirm the deletion of all Kraken Notifier subscriptions by visiting this location: ' + config.url + "/confirm?token=" + token + "\n\n"
         + "If you did not request a deletion at Kraken Notifier please ignore this email.";
     if (key) {
-        message = 'Please confirm the deletion of Kraken Notifier notification for the key ' + key + ' by visiting this location: ' + config.url + "/confirm/" + token + "\n"
+        message = 'Please confirm the deletion of Kraken Notifier notification for the key ' + key + ' by visiting this location: ' + config.url + "/confirm?token=" + token + "\n\n"
             + "If you did not request a deletion at Kraken Notifier please ignore this email.";
     }
 
     save(function() {
-        sendmail(mail, message, callback);
+        sendmail(mail, message, 'Confirm Kraken Notifier removal request', callback);
     });
 };
 
@@ -139,7 +167,16 @@ function addClient (mail, key, secret, callback) {
             secret: secret
         });
     }
-    save(callback);
+    save(function(error) {
+        if (typeof callback != 'function') {
+            return;
+        }
+        if (error) {
+            callback(error);
+        } else {
+            callback(null, 'Subscription activated! You will receive an email with your current balance in a few moments and in future on every balance change.');
+        }
+    });
 }
 
 /**
@@ -148,7 +185,6 @@ function addClient (mail, key, secret, callback) {
  * @param mail
  * @param key
  * @param callback {function}
- * @returns {boolean} True if addition was ok, false when this client already exists.
  */
 function removeClient(mail, key, callback) {
     var id;
@@ -156,12 +192,18 @@ function removeClient(mail, key, callback) {
     if (!key) {
         // Delete all subscriptions of this mail address
         var i = registry.length;
+        var found = false;
         while (i--) {
             if(registry[i].mail === mail) {
                 id = hash(mail + registry[i].key);
                 delete(registryMap[id]);
                 registry.splice(i, 1);
+                found = true;
             }
+        }
+        if (found === false) {
+            callback(new Error("This mail address doesn't exist in storage."));
+            return;
         }
     } else {
         id = hash(mail + key);
@@ -170,9 +212,19 @@ function removeClient(mail, key, callback) {
             delete(registryMap[id]);
         } else {
             callback(new Error("Key doesn't exist in storage."));
+            return;
         }
     }
-    save(callback);
+    save(function(error) {
+        if (typeof callback != 'function') {
+            return;
+        }
+        if (error) {
+            callback(error);
+        } else {
+            callback(null, 'Subscription deleted! You will receive an email to verify this step in a few moments. Please click the link in this email to confirm the deletion.');
+        }
+    });
 }
 
 function hash(data) {
@@ -196,19 +248,19 @@ function check() {
                     if (error == 'EAPI:Invalid nonce') {
                         // Invalid nonce errors get usually fixed with the next request.
                     } else if (error == 'EAPI:Invalid key') {
-                        sendmail(client.mail, 'Your API key is not valid. Please create another subscription with a valid key if you want to receive further notification.', function() {
+                        sendmail(client.mail, 'Your API key is not valid. Please create another subscription with a valid key if you want to receive further notification.\n\nKey: ' + client.key, 'You key is invalid', function() {
                             // Delete the invalid client.
-                            exports.removeClient(client.mail, client.key, next);
+                            removeClient(client.mail, client.key, next);
                             console.log("client removed because of an invalid key: " + client.mail + ", " + client.key);
                         });
                     } else {
-                        sendmail(client.mail, 'The Kraken api is not reachable currently. You will receive the next email once the api becomes accessible again.', next);
+                        sendmail(client.mail, 'The Kraken api is not reachable currently. You will receive the next email once the api becomes accessible again.', 'Kraken connection issues', next);
                     }
                 } else {
                     var stringified = JSON.stringify(data.result);
                     if (client.lastResult != stringified) {
                         client.lastResult = stringified;
-                        sendmail(client.mail, stringified, next);
+                        sendmail(client.mail, stringified, 'Kraken Balance updated', next);
                     } else {
                         next();
                     }
@@ -247,9 +299,10 @@ function save(callback) {
     });
 }
 
-function sendmail(to, message, callback) {
+function sendmail(to, message, subject, callback) {
     var mailOptions = config.mailOptions;
     mailOptions.text = message;
+    mailOptions.subject = subject;
     mailOptions.to = to;
     smtpTransport.sendMail(mailOptions, function(error, response){
         if (error){
