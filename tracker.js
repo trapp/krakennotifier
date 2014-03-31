@@ -1,10 +1,8 @@
 #!/usr/local/bin/node
 var KrakenClient = require('kraken-api');
 var nodemailer = require("nodemailer");
-var spawn = require('child_process').spawn;
 var async = require('async');
 var fs = require('fs');
-var path = require('path');
 var crypto = require('crypto');
 var config = require('./config.js');
 var smtpTransport = nodemailer.createTransport("SMTP", config.smtp);
@@ -68,7 +66,7 @@ exports.removeClient = function(mail, key, callback) {
 };
 
 exports.start = function() {
-    var storage = path.join(__dirname, config.storageFile);
+    var storage = config.storageFile;
     fs.exists(storage, function(exists) {
         if (exists === true) {
             registry = require(storage);
