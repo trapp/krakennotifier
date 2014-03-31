@@ -1,4 +1,3 @@
-#!/usr/local/bin/node
 var KrakenClient = require('kraken-api');
 var nodemailer = require("nodemailer");
 var async = require('async');
@@ -16,6 +15,9 @@ var registryMap = {};
 var confirmMap = {};
 var TOKEN_ADD = 'add';
 var TOKEN_REMOVE = 'remove';
+
+exports.TOKEN_ADD = TOKEN_ADD;
+exports.TOKEN_REMOVE = TOKEN_REMOVE;
 
 /**
  * Confirms a request to delete or add a subscription.
@@ -162,7 +164,7 @@ exports.start = function() {
 function addClient (mail, key, secret, callback) {
     var id = hash(mail + key);
     if (registryMap.hasOwnProperty(id)) {
-        callback(new Error('This API key exists already.'));
+        callback(new Error('This API key exists already.'), TOKEN_ADD);
     } else {
         registryMap[id] = registry.length;
         registry.push({
@@ -176,9 +178,9 @@ function addClient (mail, key, secret, callback) {
             return;
         }
         if (error) {
-            callback(error);
+            callback(error, TOKEN_ADD);
         } else {
-            callback(null, 'Subscription activated! You will receive an email with your current balance in a few moments and in future on every balance change.');
+            callback(null, TOKEN_ADD);
         }
     });
 }
@@ -206,7 +208,7 @@ function removeClient(mail, key, callback) {
             }
         }
         if (found === false) {
-            callback(new Error("This mail address doesn't exist in storage."));
+            callback(new errors.FieldError('mail', 'This mail address doesn\'t exist in storage.'), TOKEN_REMOVE);
             return;
         }
     } else {
@@ -215,7 +217,7 @@ function removeClient(mail, key, callback) {
             registry.splice(registryMap[id], 1);
             delete(registryMap[id]);
         } else {
-            callback(new Error("Key doesn't exist in storage."));
+            callback(new errors.FieldError('key', 'This combination of key and mail doesn\'t exist in storage.'), TOKEN_REMOVE);
             return;
         }
     }
@@ -224,9 +226,9 @@ function removeClient(mail, key, callback) {
             return;
         }
         if (error) {
-            callback(error);
+            callback(error, TOKEN_REMOVE);
         } else {
-            callback(null, 'Subscription deleted! You will receive an email to verify this step in a few moments. Please click the link in this email to confirm the deletion.');
+            callback(null, TOKEN_REMOVE);
         }
     });
 }

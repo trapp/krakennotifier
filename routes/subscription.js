@@ -72,13 +72,22 @@ exports.confirm = function(req, res) {
     if (Object.keys(errors).length > 0) {
         res.render('confirm', { title: title, errors: errors});
     } else {
-        tracker.confirm(req.query.token, function(error, message) {
+        tracker.confirm(req.query.token, function(error, type) {
             if (error) {
                 errors['token'] = {
                     'msg': error.message
                 };
                 res.render('confirm', { title: title, errors: errors});
             }
+
+            if (type == tracker.TOKEN_ADD) {
+                title = 'Thanks for your confirmation';
+                var message = 'Subscription activated! You will receive an email with your current balance in a few moments and in future on every balance change.';
+            } else {
+                title = 'Thanks for your confirmation';
+                message = 'Subscription deleted! You will receive an email to verify this step in a few moments. Please click the link in this email to confirm the deletion.';
+            }
+
             res.render('confirm', { title: title, message: message});
         });
     }
