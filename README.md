@@ -28,16 +28,26 @@ Done! You're ready to configure it.
 
 All configuration resides in one file: **config.js**
 
-To start, just copy **config.js.example** or create a new file with this content:
+To start, just copy **config.js.example** to **config.js** or create a new file with this content:
 
     module.exports = {
         // Polling interval in milli seconds.
-    	interval: 60000,
+        interval: 60000,
 
-    	// Port for the web interface.
-    	port: 3000,
+        // Port and Host for the web interface.
+        port: 3000,
+        host: '127.0.0.1',
+        ssl: null,
+        // If you want to use SSL (you should), use this config for ssl:
+        //ssl: {
+        //    port: 3443,
+        //    host: '127.0.0.1',
+        //    key: 'path_to_ssl.key',
+        //    cert: 'path_to_ssl.crt',
+        //    ca: 'path_to_ca.pem'
+        //},
 
-    	// Location of the storage file. Contains all API-Keys.
+        // Location of the storage file. Contains all API-Keys.
         storageFile: 'storage.js',
 
         // Mailing configuration.
