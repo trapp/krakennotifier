@@ -79,7 +79,7 @@ if (config.ssl !== null) {
 }
 
 http.createServer(app).listen(app.get('port'), app.get('host'), function(){
-    console.log('Express server listening on port ' + app.get('port'));
+    console.log('Express server listening on ' + app.get('host') + ":" + app.get('port'));
 });
 
 tracker.start();
