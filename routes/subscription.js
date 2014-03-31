@@ -72,20 +72,30 @@ exports.confirm = function(req, res) {
     if (Object.keys(errors).length > 0) {
         res.render('confirm', { title: title, errors: errors});
     } else {
-        tracker.confirm(req.query.token, function(error, type) {
+        tracker.confirm(req.query.token, function(error, tokenData) {
             if (error) {
                 errors['token'] = {
                     'msg': error.message
                 };
                 res.render('confirm', { title: title, errors: errors});
+                return;
             }
 
-            if (type == tracker.TOKEN_ADD) {
+            if (tokenData.type == tracker.TOKEN_ADD) {
                 title = 'Thanks for your confirmation';
                 var message = 'Subscription activated! You will receive an email with your current balance in a few moments and in future on every balance change.';
-            } else {
+            } else if (tokenData.type == tracker.TOKEN_REMOVE) {
                 title = 'Thanks for your confirmation';
-                message = 'Subscription deleted! You will receive an email to verify this step in a few moments. Please click the link in this email to confirm the deletion.';
+                if (tokenData.key) {
+                    message = 'Subscription deleted! You will not receive any further notifications for the key ' + tokenData.key + ' to ' + tokenData.mail;
+                } else {
+                    message = 'Subscription deleted! You will not receive any further notifications for any key to ' + tokenData.mail;
+                }
+            } else {
+                // TODO This code should be unreachable, but you never know ;).
+                console.log("Invalid token type detected: " + JSON.stringify(tokenData));
+                title = 'Thanks for your confirmation';
+                message = 'Your confirmation was successful';
             }
 
             res.render('confirm', { title: title, message: message});

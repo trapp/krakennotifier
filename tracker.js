@@ -39,9 +39,13 @@ exports.confirm = function(token, callback) {
         }
 
         if (data.type == TOKEN_ADD) {
-            addClient(data.mail, data.key, data.secret, callback);
+            addClient(data.mail, data.key, data.secret, function(error) {
+                callback(error, data);
+            });
         } else if (data.type == TOKEN_REMOVE) {
-            removeClient(data.mail, data.key, callback);
+            removeClient(data.mail, data.key, function(error) {
+                callback(error, data);
+            });
         } else {
             callback(new Error("Invalid token data. Please contact support."));
         }
@@ -171,7 +175,7 @@ exports.start = function() {
 function addClient (mail, key, secret, callback) {
     var id = hash(mail + key);
     if (registryMap.hasOwnProperty(id)) {
-        callback(new Error('This API key exists already.'), TOKEN_ADD);
+        callback(new Error('This API key exists already.'));
         return;
     } else {
         registryMap[id] = registry.length;
@@ -186,9 +190,9 @@ function addClient (mail, key, secret, callback) {
             return;
         }
         if (error) {
-            callback(error, TOKEN_ADD);
+            callback(error);
         } else {
-            callback(null, TOKEN_ADD);
+            callback(null);
         }
     });
 }
@@ -216,7 +220,7 @@ function removeClient(mail, key, callback) {
             }
         }
         if (found === false) {
-            callback(new errors.FieldError('mail', 'This mail address doesn\'t exist in storage.'), TOKEN_REMOVE);
+            callback(new errors.FieldError('mail', 'This mail address doesn\'t exist in storage.'));
             return;
         }
     } else {
@@ -225,7 +229,7 @@ function removeClient(mail, key, callback) {
             registry.splice(registryMap[id], 1);
             delete(registryMap[id]);
         } else {
-            callback(new errors.FieldError('key', 'This combination of key and mail doesn\'t exist in storage.'), TOKEN_REMOVE);
+            callback(new errors.FieldError('key', 'This combination of key and mail doesn\'t exist in storage.'));
             return;
         }
     }
@@ -234,9 +238,9 @@ function removeClient(mail, key, callback) {
             return;
         }
         if (error) {
-            callback(error, TOKEN_REMOVE);
+            callback(error);
         } else {
-            callback(null, TOKEN_REMOVE);
+            callback(null);
         }
     });
 }
