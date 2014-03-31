@@ -100,11 +100,18 @@ function check() {
         queue.push(function(next) {
             var kraken = new KrakenClient(client.key, client.secret);
             kraken.api('Balance', null, function(error, data) {
-                if(error && client.lastResult != 'error') {
+                if(data === null || error && client.lastResult != 'error') {
                     client.lastResult = 'error';
                     console.log("api error: ", error);
-                    // Invalid nonce errors get usually fixed with the next request.
-                    if (error != 'EAPI:Invalid nonce') {
+                    if (error == 'EAPI:Invalid nonce') {
+                        // Invalid nonce errors get usually fixed with the next request.
+                    } else if (error == 'EAPI:Invalid key') {
+                        sendmail(client.mail, 'Your API key is not valid. Please create another subscription with a valid key if you want to receive further notification.', function() {
+                            // Delete the invalid client.
+                            exports.removeClient(client.mail, client.key, next);
+                            console.log("client removed because of an invalid key: " + client.mail + ", " + client.key);
+                        });
+                    } else {
                         sendmail(client.mail, 'The Kraken api is not reachable currently. You will receive the next email once the api becomes accessible again.', next);
                     }
                 } else {

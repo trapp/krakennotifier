@@ -39,7 +39,7 @@ app.use(lessMiddleware({
     compress: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/components', express.static(__dirname + '/bower_components'));
+app.use(express.static(path.join(__dirname, '/bower_components/bootstrap/dist')));
 
 // development only
 if (isDev) {

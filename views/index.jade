@@ -2,8 +2,91 @@ extends layout
 
 block content
     div(class='jumbotron')
-        div(class='wrapper')
+        div.wrapper
             h1 Kraken Notifier
             p Get notified when your kraken.com balance changes.
 
+    section.how
+        div.wrapper
+            h2 Get started
+            ol
+                li Go to <a href="/subscribe">Subscribe</a> and add your kraken.com API key.
+                li Kraken Notifier will check your balance every few minutes.
+                li You will receive an email as soon as you balance changes for example when your deposit gets credited.
+                li Start trading right away.
+            a(href="/subscribe") <button class="btn btn-primary">Add your api key</button>
 
+    section.apikey
+        div.wrapper
+            h2 How to create an API key at kraken.com
+            div.carousel.slide(data-ride="carousel", id="tutorial")
+                ol.carousel-indicators
+                    li(data-target="#tutorial", data-slide-to="0", class="active")
+                    li(data-target="#tutorial", data-slide-to="1")
+                    li(data-target="#tutorial", data-slide-to="2")
+                    li(data-target="#tutorial", data-slide-to="3")
+                    li(data-target="#tutorial", data-slide-to="4")
+                    li(data-target="#tutorial", data-slide-to="5")
+                div.carousel-inner
+                    div.item.active
+                        img(src="/images/login.png", alt="Login")
+                        div.carousel-caption
+                            h3 1. Login to kraken
+                            p Go to kraken.com and log in using your credentials.
+                    div.item
+                        img(src="/images/settings-api.png", alt="Settings")
+                        div.carousel-caption
+                            h3 2. Navigate to "Settings" -> "API".
+                            p Go the the API configuration and click on "Generate New Key".
+                    div.item
+                        img(src="/images/api-settings.png", alt="Add key")
+                        div.carousel-caption
+                            h3 3. Configure your API key.
+                            p Add a Label and check the permission "Query funds". Leave the rest as it is and click on "Generate Key".
+                    div.item
+                        img(src="/images/result.png", alt="Result")
+                        div.carousel-caption
+                            h3 4. Done! Now add your subscription at Kraken Notifier.
+                            p Let this window open and goto Kraken Notifier in another tab.
+                    div.item
+                        img(src="/images/add-subscription.png", alt="Add subscription")
+                        div.carousel-caption
+                            h3 5. Add the kraken notifier subscription
+                            p Copy and paste your api key and secret into our subscribe form  and hit "Subscribe"
+                    div.item
+                        img(src="/images/success.png", alt="Add subscription")
+                        div.carousel-caption
+                            h3 6. Done!
+                            p Enjoy your notifications :).
+
+                a(class="left carousel-control", href="#tutorial", data-slide="prev")
+                    span(class="glyphicon glyphicon-chevron-left")
+                a(class="right carousel-control", href="#tutorial", data-slide="next")
+                    span(class="glyphicon glyphicon-chevron-right")
+
+    section.security
+        div.wrapper
+            h2 I don't want to give my precious API keys to anyone.<br/> Will you steal my funds?
+            div.row
+                div.col-md-6
+                    h3 We can't
+                    p Kraken allows to set very specific permissions for each API key. This service only needs one: "Query funds". Make sure to add this permission and only this permission. Your funds are untouchable for us.
+                div.col-md-6
+                    h3 You don't have to
+                    p Kraken Notifier is open source. Grab a copy at <a href="https://www.github.com/trapp/krakennotifier">https://github.com/trapp/krakennotifier</a> and run your own instance.
+
+    section.footer
+        div.wrapper
+            div.row
+                div.col-md-4
+                    h3 Disclaimer
+                    p Kraken Notifier is not affiliated with kraken.com.
+                    p Kraken Notifier shall not be held responsible for any injury, loss, expense or damage of any kind whatsoever suffered or incurred by any person who accesses or uses this website ("the user"). The user hereby indemnifies Kraken Notifier against any demand, claim or action against Kraken Notifier relating to or in connection with the user's use or accessing of this website whether directly or indirectly for any reason whatsoever.
+                div.col-md-4
+                    h3 About
+                    p Kraken Notifier is brought to you by Timon Rapp.
+                    p Online Portfolio: <a href="http://www.trapp.io">www.trapp.io</a>
+                    p If you have a question about Kraken Notifier, please write to: <a href="mailto:timon.rapp@trapp.io">timon.rapp@trapp.io</a>.
+                div.col-md-4
+                    h3 Development
+                    p Help improving Kraken Notifier at Github: <a href="https://github.com/trapp/krakennotifier">https://github.com/trapp/krakennotifier</a>
