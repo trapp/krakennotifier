@@ -19,7 +19,7 @@ exports.subscribe = function(req, res) {
             res.render('subscribe', { title: title, errors: errors, values: values});
         } else {
 
-            tracker.addClient(values.mail, values.key, values.secret, function(error) {
+            tracker.addRequest(values.mail, values.key, values.secret, function(error) {
                 if (error) {
                     errors['key'] = {
                         'msg': error.message
@@ -47,9 +47,9 @@ exports.unsubscribe = function(req, res) {
             res.render('subscribe', { title: title, errors: errors, values: values});
         } else {
 
-            tracker.removeClient(values.mail, values.key, function(error) {
+            tracker.removeRequest(values.mail, values.key, function(error) {
                 if (error) {
-                    // TODO improve error handling. "key" has nothing to do with it.
+                    // TODO improve error handling. "key" has maybe nothing to do with it.
                     errors['key'] = {
                         'msg': error.message
                     };
