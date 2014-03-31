@@ -47,8 +47,10 @@ To start, just copy **config.js.example** to **config.js** or create a new file 
         //    ca: 'path_to_ca.pem'
         //},
 
+        url: 'http://localhost', // The url for your service. Needed for the links in confirmation emails.
+
         // Location of the storage file. Contains all API-Keys.
-        storageFile: 'storage.js',
+        storageFile: './storage.js',
 
         // Mailing configuration.
         smtp: {
