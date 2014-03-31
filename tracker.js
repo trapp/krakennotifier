@@ -32,6 +32,7 @@ exports.confirm = function(token, callback) {
         return;
     }
     var data = confirmMap[token];
+    delete(confirmMap[token]);
     if (data.type == TOKEN_ADD) {
         addClient(data.mail, data.key, data.secret, callback);
     } else if (data.type == TOKEN_REMOVE) {
