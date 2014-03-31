@@ -30,6 +30,15 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(expressValidator());
+if (config.ssl) {
+    app.use (function (req, res, next) {
+        if (req.secure) {
+            next();
+        } else {
+            res.redirect('https://' + req.headers.host + req.url);
+        }
+    });
+}
 app.use(app.router);
 app.use(lessMiddleware({
     src: path.join(__dirname, 'less'),
@@ -56,14 +65,6 @@ app.post('/unsubscribe', subscription.unsubscribe);
 app.get('/confirm', subscription.confirm);
 
 if (config.ssl) {
-
-    app.use (function (req, res, next) {
-        if (req.secure) {
-            next();
-        } else {
-            res.redirect('https://' + req.headers.host + req.url);
-        }
-    });
 
     if (config.ssl.hasOwnProperty('key')) {
         config.ssl.key = fs.readFileSync(config.ssl.key);
