@@ -266,12 +266,19 @@ function check() {
                     if (error == 'EAPI:Invalid nonce') {
                         // Invalid nonce errors get usually fixed with the next request.
                     } else if (error == 'EAPI:Invalid key') {
-                        sendmail(client.mail, 'Your API key is not valid. Please create another subscription with a valid key if you want to receive further notification.\n\nKey: ' + client.key, 'You key is invalid', function() {
+                        sendmail(client.mail, 'Your API key is not valid. Please create another subscription with a valid key if you want to receive further notification.\n\nKey: ' + client.key, 'You key is invalid', function () {
                             // Delete the invalid client.
                             removeClient(client.mail, client.key, next);
                             console.log("client removed because of an invalid key: " + client.mail + ", " + client.key);
                         });
+                    } else if (error == 'EGeneral:Permission denied') {
+                        sendmail(client.mail, 'Your API key doesn\'t have the necessary permissions. Please add the permission "Query Funds" to your key and create a new subscription.\n\nKey: ' + client.key, 'You key doesn\'t have enough permissions', function () {
+                            // Delete the invalid client.
+                            removeClient(client.mail, client.key, next);
+                            console.log("client removed because of missing permissions key: " + client.mail + ", " + client.key);
+                        });
                     } else {
+                        console.log("Unhandled error: " + error);
                         sendmail(client.mail, 'The Kraken api is not reachable currently. You will receive the next email once the api becomes accessible again.', 'Kraken connection issues', next);
                     }
                 } else {
