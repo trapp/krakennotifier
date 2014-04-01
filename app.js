@@ -25,7 +25,8 @@ app.set('host', process.env.HOST || config.host);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon(path.join(__dirname, 'public/favicon.ico'))); 
-app.use(express.logger('dev'));
+app.use(express.logger());
+app.use(express.compress());
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
@@ -49,7 +50,6 @@ app.use(lessMiddleware({
     force: isDev,
     compress: true
 }));
-app.use(express.compress());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '/bower_components/bootstrap/dist')));
 
