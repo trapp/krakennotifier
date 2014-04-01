@@ -14,8 +14,10 @@ var path = require('path');
 var lessMiddleware = require('less-middleware');
 var tracker = require('./tracker.js');
 var config = require('./config.js');
+
 var app = express();
 var isDev = app.get('env') == 'development';
+var cacheDuration = 18000000; // 5 Hours
 
 subscription.inject(tracker);
 
@@ -24,7 +26,7 @@ app.set('port', process.env.PORT || config.port);
 app.set('host', process.env.HOST || config.host);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(express.favicon(path.join(__dirname, 'public/favicon.ico'))); 
+app.use(express.favicon(path.join(__dirname, 'public/favicon.ico'), {maxAge: cacheDuration})); 
 app.use(express.logger());
 app.use(express.compress());
 app.use(express.json());
@@ -50,8 +52,8 @@ app.use(lessMiddleware({
     force: isDev,
     compress: true
 }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, '/bower_components/bootstrap/dist')));
+app.use(express.static(path.join(__dirname, 'public'), {maxAge: cacheDuration}));
+app.use(express.static(path.join(__dirname, '/bower_components/bootstrap/dist'), {maxAge: cacheDuration}));
 
 // development only
 if (isDev) {
