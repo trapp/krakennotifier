@@ -17,7 +17,7 @@ var config = require('./config.js');
 
 var app = express();
 var isDev = app.get('env') == 'development';
-var cacheDuration = 18000000; // 5 Hours
+var cacheDuration = 600000; // 10 minutes
 
 subscription.inject(tracker);
 
