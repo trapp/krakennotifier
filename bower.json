@@ -1,10 +1,10 @@
 {
-  "name": "trapp.io",
+  "name": "krakennotifier",
   "version": "1.0.0",
   "authors": [
     "Timon Rapp <timon@zaeda.net>"
   ],
-  "description": "Trapps online portfolio",
+  "description": "Kraken Notifier - Watch your kraken balance",
   "main": "app.js",
   "license": "MIT",
   "homepage": "https://github.com/trapp/krakennotifier",
