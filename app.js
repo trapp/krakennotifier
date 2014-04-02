@@ -32,6 +32,7 @@ app.use(express.compress());
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
+app.use(require('express-force-domain')(config.url));
 app.use(expressValidator());
 if (config.ssl) {
     app.use (function (req, res, next) {

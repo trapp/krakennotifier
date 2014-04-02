@@ -2,7 +2,7 @@
 
 Sends an email when your kraken.com balance changes.
 
-Check it out at: [krakennotifier.trapp.io](http://krakennotifier.trapp.io)
+Check it out at: [https://krakennotifier.zaeda.net](https://krakennotifier.zaeda.net)
 
 ## Requirements
 
