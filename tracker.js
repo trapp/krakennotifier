@@ -260,11 +260,11 @@ function check() {
         queue.push(function(next) {
             var kraken = new KrakenClient(client.key, client.secret);
             kraken.api('Balance', null, function(error, data) {
-                if(data === null || error && client.lastResult != 'error') {
-                    client.lastResult = 'error';
+                if(data === null || error) {
                     console.log("api error: ", error);
                     if (error == 'EAPI:Invalid nonce') {
                         // Invalid nonce errors get usually fixed with the next request.
+			            next();
                     } else if (error == 'EAPI:Invalid key') {
                         sendmail(client.mail, 'Your API key is not valid. Please create another subscription with a valid key if you want to receive further notification.\n\nKey: ' + truncateKey(client.key), 'You key is invalid', function () {
                             // Delete the invalid client.
@@ -279,13 +279,15 @@ function check() {
                         });
                     } else {
                         console.log("Unhandled error: " + error);
-                        sendmail(client.mail, 'The Kraken api is not reachable currently. You will receive the next email once the api becomes accessible again.', 'Kraken connection issues', next);
+                        // We want to notify users of balance changes only.
+                        // No need to throw errors at them every minute when the api is down.
+			            next();
                     }
                 } else {
                     var stringified = JSON.stringify(data.result);
                     if (client.lastResult != stringified) {
                         client.lastResult = stringified;
-                        sendmail(client.mail, stringified, 'Kraken Balance updated', next);
+                        sendmail(client.mail, stringified, 'Kraken Balance update', next);
                     } else {
                         next();
                     }
