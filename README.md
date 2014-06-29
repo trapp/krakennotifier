@@ -35,7 +35,7 @@ To start, just copy **config.js.example** to **config.js** or create a new file 
         interval: 60000,
 
         // Port and Host for the web interface.
-        port: 3000,
+        port: 3000, // Unless you have forwarding configured, include this port in the url on line 18, below.
         host: '127.0.0.1',
         ssl: null,
         // If you want to use SSL (you should), use this config for ssl:
@@ -47,7 +47,7 @@ To start, just copy **config.js.example** to **config.js** or create a new file 
         //    ca: 'path_to_ca.pem'
         //},
 
-        url: 'http://localhost', // The url for your service. Needed for the links in confirmation emails.
+        url: 'http://localhost:3000', // The url for your service. Needed for the links in confirmation emails.
 
         // Location of the storage file. Contains all API-Keys.
         storageFile: './storage.js',
