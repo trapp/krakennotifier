@@ -287,7 +287,16 @@ function check() {
                     var stringified = JSON.stringify(data.result);
                     if (client.lastResult != stringified) {
                         client.lastResult = stringified;
-                        sendmail(client.mail, stringified, 'Kraken Balance update', next);
+                        var mailBody = '';
+                        for(var key in data.result) {
+                            var currency = key;
+                            if (currency.charAt(0) === 'X' || currency.charAt(0) === 'Z') {
+                                // Remove first character if it's X or Z, so that we have a 3-letter currency code for human readability
+                                currency = currency.substr(1);
+                            }
+                            mailBody += currency + ': ' + data.result[key] + '\n';
+                        }
+                        sendmail(client.mail, mailBody, 'Kraken Balance updated', next);
                     } else {
                         next();
                     }
