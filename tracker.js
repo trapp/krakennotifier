@@ -256,32 +256,49 @@ function check() {
     console.log("checking");
 
     var queue = [];
+    var counter = 0;
     registry.forEach(function(client) {
-        queue.push(function(next) {
+
+        var checkClient = function(attempt, next) {
+            console.log("Checking client " + counter + " attempt " + attempt);
             var kraken = new KrakenClient(client.key, client.secret);
             kraken.api('Balance', null, function(error, data) {
+                var delayNext = function() {
+                    setTimeout(next, 500);
+                };
                 if(data === null || error) {
-                    console.log("api error: ", error);
+                    console.log("api error: ", error, data);
                     if (error == 'EAPI:Invalid nonce') {
                         // Invalid nonce errors get usually fixed with the next request.
-			            next();
+                        delayNext();
                     } else if (error == 'EAPI:Invalid key') {
                         sendmail(client.mail, 'Your API key is not valid. Please create another subscription with a valid key if you want to receive further notification.\n\nKey: ' + truncateKey(client.key), 'You key is invalid', function () {
                             // Delete the invalid client.
-                            removeClient(client.mail, client.key, next);
+                            removeClient(client.mail, client.key, delayNext);
                             console.log("client removed because of an invalid key: " + client.mail + ", " + client.key);
                         });
                     } else if (error == 'EGeneral:Permission denied') {
                         sendmail(client.mail, 'Your API key doesn\'t have the necessary permissions. Please add the permission "Query Funds" to your key and create a new subscription.\n\nKey: ' + truncateKey(client.key), 'You key doesn\'t have enough permissions', function () {
                             // Delete the invalid client.
-                            removeClient(client.mail, client.key, next);
+                            removeClient(client.mail, client.key, delayNext);
                             console.log("client removed because of missing permissions key: " + client.mail + ", " + truncateKey(client.key));
                         });
                     } else {
                         console.log("Unhandled error: " + error);
                         // We want to notify users of balance changes only.
                         // No need to throw errors at them every minute when the api is down.
-			            next();
+
+                        // Try it up to 5 times per user.
+                        if (attempt < 5) {
+                            setTimeout(
+                                function() {
+                                    checkClient(attempt + 1, next);
+                                },
+                                1000
+                            );
+                        } else {
+                            delayNext();
+                        }
                     }
                 } else {
                     var stringified = JSON.stringify(data.result);
@@ -296,12 +313,17 @@ function check() {
                             }
                             mailBody += currency + ': ' + data.result[key] + '\n';
                         }
-                        sendmail(client.mail, mailBody, 'Kraken Balance updated', next);
+                        sendmail(client.mail, mailBody, 'Kraken Balance updated', delayNext);
                     } else {
-                        next();
+                        delayNext();
                     }
                 }
             });
+        };
+
+        queue.push(function(next) {
+            counter++;
+            checkClient(1, next);
         });
     });
 
